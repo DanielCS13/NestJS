@@ -4,3 +4,7 @@ To create a controller without uni-test
     nest g controller users --no-spec
 To create a service without uni-test
     nest g service users --no-spec
+
+Configuration of database in app.module.ts
+
+Procced to define entity.ts to table in mysql

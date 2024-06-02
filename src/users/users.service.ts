@@ -7,40 +7,41 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
 
-    constructor(@InjectRepository(User) private userRepository: Repository<User>){}
+  createUser(user: CreateUserDto) {
+    const userFound = this.userRepository.findOne({
+      where: {
+        username: user.username,
+      },
+    });
 
-    createUser(user: CreateUserDto) {
-        const userFound = this.userRepository.findOne({
-            where: {
-                username: user.username,
-            }
-        })
-        
-        if (userFound) {
-            return new HttpException('User already exists', HttpStatus.CONFLICT)
-        }
-        
-        const newUser = this.userRepository.create(user);
-        return this.userRepository.save(newUser);
+    if (userFound) {
+      return new HttpException('User already exists', HttpStatus.CONFLICT);
     }
 
-    getUsers() {
-        return this.userRepository.find();
-    }
+    const newUser = this.userRepository.create(user);
+    return this.userRepository.save(newUser);
+  }
 
-    getUser(id: number) {
-        return this.userRepository.findOne({
-            where: { id }
-        });
-    }
+  getUsers() {
+    return this.userRepository.find();
+  }
 
-    deleteUser(id: number) {
-        return this.userRepository.delete(id);
-    }
+  getUser(id: number) {
+    return this.userRepository.findOne({
+      where: { id },
+    });
+  }
 
-    //Update user
-    updateUser(id: number, user: UpdateUserDto) {
-        return this.userRepository.update({id}, user);
-    }
+  deleteUser(id: number) {
+    return this.userRepository.delete(id);
+  }
+
+  //Update user
+  updateUser(id: number, user: UpdateUserDto) {
+    return this.userRepository.update({ id }, user);
+  }
 }
