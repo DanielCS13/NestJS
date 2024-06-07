@@ -11,19 +11,38 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  createUser(user: CreateUserDto) {
-    const userFound = this.userRepository.findOne({
-      where: {
-        username: user.username,
-      },
-    });
+  async createUser(user: CreateUserDto) {
+    const queryRunner =
+      this.userRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    if (userFound) {
-      return new HttpException('User already exists', HttpStatus.CONFLICT);
+    try {
+      const userFound = await this.userRepository.findOne({
+        where: {
+          name: user.name,
+          // username: user.username,
+        },
+      });
+
+      if (userFound) {
+        throw new HttpException('User already exists', HttpStatus.CONFLICT);
+      }
+
+      const newUser = this.userRepository.create(user);
+      await queryRunner.manager.save(newUser);
+
+      await queryRunner.commitTransaction();
+      return newUser;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    } finally {
+      await queryRunner.release();
     }
-
-    const newUser = this.userRepository.create(user);
-    return this.userRepository.save(newUser);
   }
 
   getUsers() {
