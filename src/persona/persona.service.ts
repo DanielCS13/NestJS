@@ -11,20 +11,38 @@ export class PersonaService {
     @InjectRepository(Persona) private personaRepository: Repository<Persona>,
   ) {}
 
-  createPersona(persona: CreatePersonaDto) {
-    const personaFound = this.personaRepository.findOne({
-      where: {
-        cPerApellido: persona.cPerApellido,
-        cPerNombre: persona.cPerNombre,
-      },
-    });
+  async createPersona(persona: CreatePersonaDto) {
+    const queryRunner =
+      this.personaRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    if (personaFound) {
-      return new HttpException('Persona already exists', HttpStatus.CONFLICT);
+    try {
+      const personaFound = await this.personaRepository.findOne({
+        where: {
+          cPerApellido: persona.cPerApellido,
+          cPerNombre: persona.cPerNombre,
+        },
+      });
+
+      if (personaFound) {
+        throw new HttpException('Persona already exists', HttpStatus.CONFLICT);
+      }
+
+      const newPersona = this.personaRepository.create(persona);
+      await queryRunner.manager.save(newPersona);
+
+      await queryRunner.commitTransaction();
+      return newPersona;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    } finally {
+      await queryRunner.release();
     }
-
-    const newPersona = this.personaRepository.create(persona);
-    return this.personaRepository.save(newPersona);
   }
 
   getPersonas() {
