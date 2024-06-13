@@ -19,7 +19,18 @@ export class PersonaController {
 
   @Post()
   createPersona(@Body() newPersona: CreatePersonaDto) {
-    return this.personaService.createPersona(newPersona);
+    const persona = new Persona();
+    persona.cPerApellido = newPersona.cPerApellido;
+    persona.cPerNombre = newPersona.cPerNombre;
+    persona.cPerDireccion = newPersona.cPerDireccion;
+    persona.cPerFecNac = new Date(newPersona.cPerFecNac);
+    persona.nPerEdad = newPersona.nPerEdad;
+    persona.nPerSueldo = newPersona.nPerSueldo;
+    persona.cPerRnd = newPersona.cPerRnd;
+    persona.cPerEstado = newPersona.cPerEstado;
+    persona.remember_token = newPersona.remember_token;
+
+    return this.personaService.createPersona(persona);
   }
 
   @Get()

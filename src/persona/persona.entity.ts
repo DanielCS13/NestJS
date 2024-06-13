@@ -27,13 +27,13 @@ export class Persona {
   @Column({ type: 'decimal', precision: 6, scale: 2, nullable: false })
   nPerSueldo: number;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ length: 50, default: '123Rnd', nullable: false })
   cPerRnd: string;
 
   @Column({ length: 1, nullable: false, default: '1' })
   cPerEstado: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ length: 100, default: 'tokenX', nullable: true })
   remember_token: string;
 
   @Column({

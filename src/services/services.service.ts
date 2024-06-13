@@ -14,6 +14,23 @@ export class ServicesService {
   ) {}
 
   async createService(service: CreateServiceDto) {
+    if (!service.titulo && !service.descripcion) {
+      throw new HttpException(
+        'Los campos título y descripción son requeridos.',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else if (!service.titulo) {
+      throw new HttpException(
+        'El campo título es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else if (!service.descripcion) {
+      throw new HttpException(
+        'El campo descripción es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const serviceFound = await this.servicesRepository.findOne({
       where: {
         titulo: service.titulo,
@@ -21,7 +38,7 @@ export class ServicesService {
     });
 
     if (serviceFound) {
-      return new HttpException('Service already exists', HttpStatus.CONFLICT);
+      return new HttpException('Ese servicio ya existe.', HttpStatus.CONFLICT);
     }
 
     const newService = this.servicesRepository.create(service);

@@ -12,6 +12,31 @@ export class PersonaService {
   ) {}
 
   async createPersona(persona: CreatePersonaDto) {
+    if (!persona.cPerApellido || !persona.cPerNombre || !persona.cPerFecNac) {
+      throw new HttpException(
+        'Los campos apellido, nombre y fecha de nacimiento son requeridos.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (!persona.nPerEdad) {
+      throw new HttpException(
+        'El campo edad es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (!persona.nPerSueldo) {
+      throw new HttpException(
+        'El campo sueldo es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (!persona.cPerEstado) {
+      throw new HttpException(
+        'El campo estado es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const queryRunner =
       this.personaRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
