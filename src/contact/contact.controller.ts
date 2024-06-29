@@ -7,18 +7,24 @@ import {
   Param,
   // Patch,
   Delete,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 //   import { UpdatePersonaDto } from './dto/update-persona.dto';
 import { Contact } from './contact.entity';
+import { MessageService } from '../message/message.service';
 
 @Controller('contact')
 export class ContactController {
-  constructor(private contactService: ContactService) {}
+  constructor(
+    private contactService: ContactService,
+    private messageService: MessageService,
+  ) {}
 
   @Post()
-  createContact(@Body() newContact: CreateContactDto) {
+  async createContact(@Body() newContact: CreateContactDto) {
     const contact = new Contact();
     contact.name = newContact.name;
     contact.email = newContact.email;
@@ -26,7 +32,19 @@ export class ContactController {
     contact.message = newContact.message;
     contact.frontend = newContact.frontend;
 
-    return this.contactService.createContact(contact);
+    try {
+      await this.messageService.sendMail(
+        contact.email, // El destinatario del correo
+        contact.issue,
+        `Has recibido una respuesta`,
+        `<p>Has recibido una respuesta 2</p>`,
+      );
+
+      const savedForm = await this.contactService.createContact(contact);
+      return savedForm;
+    } catch (error) {
+      console.error('Error al enviar el correo o guardar el contacto:', error);
+    }
   }
 
   @Get()
