@@ -9,6 +9,7 @@ import { PersonaModule } from './persona/persona.module';
 import { ServicesModule } from './services/services.module';
 import { ContactModule } from './contact/contact.module';
 import { MessageModule } from './message/message.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { MessageModule } from './message/message.module';
     ServicesModule,
     ContactModule,
     MessageModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

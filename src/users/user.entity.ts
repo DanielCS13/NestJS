@@ -17,7 +17,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   rememberToken: string;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
