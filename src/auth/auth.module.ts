@@ -10,7 +10,7 @@ import { UsersModule } from 'src/users/users.module';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'your_jwt_secret', // Debe ser más seguro en producción
+      secret: 'daniel123', // Debe ser más seguro en producción
       signOptions: { expiresIn: '60m' },
     }),
     // Importar el módulo de usuario
