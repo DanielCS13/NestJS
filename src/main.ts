@@ -1,33 +1,32 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
-// import session from 'express-session';
-// import {createClient} from 'redis';
-// import RedisStore from 'connect-redis';
+import * as expressSession from 'express-session';
+import * as cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.use(cookieParser());
+  app.enableCors({
+    origin: 'http://localhost:4321',
+    credentials: true,
+  });
 
-  // let redisClient = createClient()
-  // redisClient.connect().catch(console.error);
-
-  // let redisStore = new RedisStore({
-  //   client: redisClient,
-  //   prefix: 'session:',
-  // });
-
-  // app.use(
-  //   session({
-  //     store: redisStore,
-  //     secret: 'my-secret',
-  //     resave: false,
-  //     saveUninitialized: false,
-  //     cookie: { maxAge: 1000 * 60 * 60 },
-  //   }),
-  // );
+  app.use(
+    expressSession({
+      name: 'session',
+      secret: 'my-secret',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 1000 * 60 * 60,
+        secure: false,
+        httpOnly: false,
+      },
+    }),
+  );
 
   await app.listen(3000);
 }

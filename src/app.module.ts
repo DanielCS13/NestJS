@@ -10,7 +10,7 @@ import { ServicesModule } from './services/services.module';
 import { ContactModule } from './contact/contact.module';
 import { MessageModule } from './message/message.module';
 import { AuthModule } from './auth/auth.module';
-import { SessionModule } from 'nestjs-session';
+// import { SessionModule } from 'nestjs-session';
 
 @Module({
   imports: [
