@@ -7,6 +7,9 @@ export class Services {
   id: number;
 
   @Column()
+  image: string;
+
+  @Column()
   titulo: string;
 
   @Column()

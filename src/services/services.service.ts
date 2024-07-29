@@ -29,6 +29,11 @@ export class ServicesService {
         'El campo descripción es requerido.',
         HttpStatus.BAD_REQUEST,
       );
+    } else if (!service.image) {
+      throw new HttpException(
+        'El campo imagen es requerido.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const serviceFound = await this.servicesRepository.findOne({
