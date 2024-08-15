@@ -57,32 +57,31 @@ export class ServicesController {
     if (isNaN(numericId)) {
       throw new HttpException('ID inválido', HttpStatus.BAD_REQUEST);
     }
-  
+
     const existingService = await this.servicesService.getService(numericId);
     if (!existingService) {
       throw new HttpException('Servicio no encontrado', HttpStatus.NOT_FOUND);
     }
-  
+
     const updatedData: UpdateServiceDto = {
       ...updateServiceDto,
       image: file ? file.path : existingService.image,
     };
-  
+
     // Elimina la imagen antigua si se ha proporcionado una nueva
     if (file && existingService.image) {
       const oldImagePath = join(__dirname, '..', '..', existingService.image);
       console.log('Ruta del archivo a eliminar:', oldImagePath); // Agrega esta línea para depuración
-  
+
       try {
         unlinkSync(oldImagePath);
       } catch (error) {
         console.error('Error al eliminar la imagen antigua:', error);
       }
     }
-  
+
     return this.servicesService.updateService(numericId, updatedData);
   }
-
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
@@ -91,17 +90,16 @@ export class ServicesController {
     if (!service) {
       throw new HttpException('Servicio no encontrado', HttpStatus.NOT_FOUND);
     }
-  
+
     // Elimina la imagen asociada
     if (service.image) {
       try {
         unlinkSync(join(__dirname, '..', '..', service.image));
       } catch (error) {
-        console.error('Error al eliminar la imagen:', error);
+        console.error('Error al eliminar la imagen: ', error);
       }
     }
-  
+
     return this.servicesService.deleteService(numericId);
   }
-
 }
